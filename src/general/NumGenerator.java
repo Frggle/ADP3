@@ -22,25 +22,13 @@ import adt.interfaces.AdtArray;
  */
 public class NumGenerator {
 	/**
-	 * Marc
-	 * InsertionSort mit zahlen.dat = 1.530.204 ms
-	 * QuickSort (LEFT) mit zahlen.dat (ohne InsertionSort Messung) = 6115 ms
-	 * QuickSort (RIGHT) mit zahlen.dat (ohne InsertionSort Messung) = 2340 ms
-	 * QuickSort (MEDIANOF3) mit zahlen.dat (ohne InsertionSort Messung) = 2768 ms
-	 * QuickSort (RANDOM) mit zahlen.dat (ohne InsertionSort Messung) = 3404 ms
-	 * 
-	 * Constantin
-	 * InsertionSort mit zahlen.dat = 622.092 ms
-	 */
-	
-	/**
 	 * Erzeugt eine Datei mit der angegebenen Anzahl an zufaelligen Zahlen. Die Zahlen werden hintereinander weg
 	 * geschrieben und durch ein Leerzeichen getrennt. Die Range der zufaelligen Zahlen ist 1..(quantity * 3)
 	 * @param filename, Dateiname (Endung *.dat wird automatisch ergaenzt)
 	 * @param quantity, die Anzahl der zufaellig generierten Zahlen
 	 * @param yesToDuplicates, true = es duerfen Zahlen doppelt vorkommen; false = jede Zahl darf max. einmal vorkommen
 	 */
-	public static void sortNum(String filename, int quantity, boolean yesToDuplicates) {
+	public static void sortNum(String filename, int quantity, Boolean yesToDuplicates) {
 		
 		File file = new File(filename + ".dat");
 		if(file.exists()) {

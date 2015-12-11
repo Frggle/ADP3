@@ -10,9 +10,9 @@ public interface AdtAVLBaum {
 	
 	public int high();
 	
-	public AdtAVLBaum insert(int elem);
+	public void insert(int elem);
 	
-	public AdtAVLBaum delete(int elem);
+	public void delete(int elem);
 	
-	public void print();
+	public boolean print();
 }
