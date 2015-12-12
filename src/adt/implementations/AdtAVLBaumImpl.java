@@ -1,5 +1,14 @@
 package adt.implementations;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 import adt.interfaces.AdtAVLBaum;
 
 public class AdtAVLBaumImpl implements AdtAVLBaum {
@@ -15,7 +24,7 @@ public class AdtAVLBaumImpl implements AdtAVLBaum {
 	}
 	
 	public static void main(String[] args) {
-		System.loadLibrary("gv_java");
+		System.loadLibrary("gv");
 	}
 	
 	@Override
@@ -40,7 +49,34 @@ public class AdtAVLBaumImpl implements AdtAVLBaum {
 	
 	@Override
 	public boolean print() {
-		// TODO GraphViz .dot Export
+		String time = new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime());
+		
+		File file = new File("avl_" + time + ".dat");
+		if(file.exists()) {
+			System.err.println("Die Datei existiert bereits");
+		} else {
+			try {
+				file.createNewFile();
+			} catch(IOException e) {
+				e.printStackTrace();
+			}
+			BufferedWriter bw = null;
+			try {
+				FileWriter fw = new FileWriter(file);
+				bw = new BufferedWriter(fw);
+
+				// TODO: rekursiv den Baum durchlaufen und in Datei schreiben?! Unsicher ob das richtig ist 
+				
+			} catch(IOException e) {
+				e.printStackTrace();
+			} finally {
+				try {
+					bw.close();
+				} catch(IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
 		return false;
 	}
 
