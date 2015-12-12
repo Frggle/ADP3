@@ -1,5 +1,7 @@
 package adt.interfaces;
 
+import java.util.Set;
+
 public interface AdtAVLBaum {
 	
 	public static AdtAVLBaum create() {
@@ -15,4 +17,8 @@ public interface AdtAVLBaum {
 	public void delete(int elem);
 	
 	public boolean print();
+
+	public void treeToSet();
+	
+	public Set<String> getSet();
 }
