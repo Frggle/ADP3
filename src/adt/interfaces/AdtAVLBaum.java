@@ -17,8 +17,6 @@ public interface AdtAVLBaum {
 	public void delete(int elem);
 	
 	public boolean print();
-
-	public void treeToSet();
 	
 	public Set<String> getSet();
 }

@@ -1,6 +1,0 @@
-graph graphname {
-4 -- null_
-1 -- 4
-4 -- _null
-1 -- null_
-}
