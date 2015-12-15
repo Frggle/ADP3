@@ -30,7 +30,6 @@ public class AdtAVLBaumImpl implements AdtAVLBaum {
 		baum.insert(4);
 		baum.insert(2);
 		baum.insert(3);
-		baum.insert(3);
 
 		baum.print();
 		System.err.println(baum.getSet());
@@ -80,7 +79,7 @@ public class AdtAVLBaumImpl implements AdtAVLBaum {
 			FileWriter fw = new FileWriter(file);
 			bw = new BufferedWriter(fw);
 			
-			bw.write("graph avlbaum {\n");
+			bw.write("digraph avlbaum {\n");
 			for(String string : alleKnotenVerbindungen) {
 				bw.write(string + "\n");
 			}
@@ -94,6 +93,20 @@ public class AdtAVLBaumImpl implements AdtAVLBaum {
 			} catch(IOException e) {
 				e.printStackTrace();
 			}
+		}
+		try {
+			Runtime r = Runtime.getRuntime();
+			String s = "";
+			String outfileName = file.getName() + ".png";
+			if(System.getProperty("os.name").equals("Mac OS X")) {
+				s = "/usr/local/bin/dot " + file.getName() + " -Tpng -o " + outfileName;	
+			} else {
+				s = "dot " + file.getName() + " -Tpng -o" + outfileName;
+			}
+			Process p = r.exec(s);
+			p.waitFor();
+		} catch(IOException | InterruptedException e) {
+			e.printStackTrace();
 		}
 		return true;
 	}
@@ -118,8 +131,11 @@ public class AdtAVLBaumImpl implements AdtAVLBaum {
 			AVLKnoten rechts = knoten.getRechts();
 			
 			// Fuegt wenn Kind == null einen leeren String ein -> wird in GraphViz ignoriert
-			alleKnotenVerbindungen.add(knoten.getWert() + (links == null ? "" : " -- " + links.getWert()));
-			alleKnotenVerbindungen.add(knoten.getWert() + (rechts == null ? "" : " -- " + rechts.getWert()));
+			alleKnotenVerbindungen.add(knoten.getWert() + (links == null ? "" : " -> " + links.getWert()));
+			alleKnotenVerbindungen.add(knoten.getWert() + (rechts == null ? "" : " -> " + rechts.getWert()));
+			// -> == digraph (directed)
+			// -- == graph (undirected)
+			
 			
 			treeToSet(links);
 			treeToSet(rechts);
