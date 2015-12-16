@@ -1,6 +1,6 @@
-package adt.implementations;
+package general;
 
-class AVLKnoten {
+public class AVLKnoten {
 	
 	/* Instanzvariablen */
 	private AVLKnoten links, rechts;	// Kinder
@@ -82,5 +82,12 @@ class AVLKnoten {
 	 */
 	public int getWert() {
 		return wert;
+	}
+	
+	/**
+	 * Setzt den Wert des Knoten
+	 */
+	public void setWert(int elem) {
+		this.wert = elem;
 	}
 }

@@ -1,5 +1,7 @@
 package adt.implementations;
 
+import general.AVLKnoten;
+import general.Count;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -15,24 +17,31 @@ public class AdtAVLBaumImpl implements AdtAVLBaum {
 	private AVLKnoten wurzel;
 	private Set<String> alleKnotenVerbindungen;
 	
+	private int insertCountRead;
+	private int insertCountWrite;
+	private int deleteCountRead;
+	private int deleteCountWrite;
+	private int rightRotCounter;
+	private int leftRotCounter;
+	
 	private AdtAVLBaumImpl() {
 		wurzel = null;
 		alleKnotenVerbindungen = new HashSet<>();
+
+		initCounter();
+	}
+	
+	private void initCounter() {
+		insertCountRead = 0;
+		insertCountWrite = 0; 
+		deleteCountRead = 0;
+		deleteCountWrite = 0;
+		rightRotCounter = 0;
+		leftRotCounter = 0;
 	}
 	
 	public static AdtAVLBaum create() {
 		return new AdtAVLBaumImpl();
-	}
-	
-	public static void main(String[] args) {
-		AdtAVLBaum baum = AdtAVLBaumImpl.create();
-		
-		baum.insert(4);
-		baum.insert(2);
-		baum.insert(3);
-
-		baum.print();
-		System.err.println(baum.getSet());
 	}
 	
 	@Override
@@ -52,7 +61,7 @@ public class AdtAVLBaumImpl implements AdtAVLBaum {
 	
 	@Override
 	public void delete(int elem) {
-		// TODO Auto-generated method stub
+		delete(wurzel, elem);
 	}
 	
 	@Override
@@ -111,35 +120,69 @@ public class AdtAVLBaumImpl implements AdtAVLBaum {
 		return true;
 	}
 	
+	@Override
+	public long insertRunTime(int elem) {
+		long startTime = System.nanoTime();
+		this.insert(elem);
+		return System.nanoTime() - startTime;
+	}
+
+	@Override
+	public Count insertCount(int elem) {
+		initCounter();
+		// TODO insert reinkopieren und die Counter hochzaehlen
+		return new Count(insertCountRead, insertCountWrite, leftRotCounter, rightRotCounter);
+	}
+
+	@Override
+	public Count deleteCount(int elem) {
+		initCounter();
+		// TODO delete reinkopieren und die Counter hochzaehlen
+		return new Count(deleteCountRead, deleteCountWrite, leftRotCounter, rightRotCounter);
+	}
+	
 	// TODO: wieder löschen, nur zum Testen
 	@Override
 	public Set<String> getSet() {
 		return alleKnotenVerbindungen;
 	}
 	
-	private void treeToSet() {
-		if(wurzel == null) {
-			System.err.println("AVL Baum ist leer!");
-		} else {
-			treeToSet(wurzel);
+	private AVLKnoten delete(AVLKnoten knoten, int elem) {
+		if(knoten == null) {
+			return knoten;
 		}
-	}
-	
-	private void treeToSet(AVLKnoten knoten) {
-		if(knoten != null) {
-			AVLKnoten links = knoten.getLinks();
-			AVLKnoten rechts = knoten.getRechts();
+		int knotenWert = knoten.getWert();
+		if(knotenWert > elem) {
+			// TODO: Idee: in jedem Schritt die Höhe verringern und prüfen ob Balance gegeben
+			// Problem, wenn Element gar nicht im AVLBaum enthalten -> Höhe umsonst angepasst
+			AVLKnoten linkerKnoten = knoten.getLinks();
+			knoten.setLinks(delete(linkerKnoten, elem));
+		} else if(knotenWert < elem) {
+			// TODO: selbiges wie knotenWert > elem
+			AVLKnoten rechterKnoten = knoten.getRechts();
+			knoten.setRechts(delete(rechterKnoten, elem));
+		} else {	// zu loeschendes Element gefunden
+			if(knoten.getHoehe() == 1) {	// keine Kinder
+				knoten = null;
+			} else if((knoten.getLinks() != null) ^ (knoten.getRechts() != null)) {	// genau EIN Kind
+				if(knoten.getLinks() != null) {	// setze Kind auf zu loeschenden Knoten
+					knoten = knoten.getLinks();
+				} else {
+					knoten = knoten.getRechts();
+				}
+			} else if((knoten.getLinks() != null) && (knoten.getRechts() != null)) {// zwei Kinder
+				// TODO
+				AVLKnoten minKnoten = knoten.getRechts();	// minimalster Knoten im rechten Teilbaum (ausgehend vom zu loeschenden Knoten)
+				while(minKnoten.getLinks() != null) {
+					minKnoten = minKnoten.getLinks();
+				}
+				delete(knoten, minKnoten.getWert());	// loescht in dem Teilbaum den Knoten, dessen Wert kopiert wird
+				knoten.setWert(minKnoten.getWert());	// kopiert den Wert vom geloeschten Knoten
+			}
 			
-			// Fuegt wenn Kind == null einen leeren String ein -> wird in GraphViz ignoriert
-			alleKnotenVerbindungen.add(knoten.getWert() + (links == null ? "" : " -> " + links.getWert()));
-			alleKnotenVerbindungen.add(knoten.getWert() + (rechts == null ? "" : " -> " + rechts.getWert()));
-			// -> == digraph (directed)
-			// -- == graph (undirected)
-			
-			
-			treeToSet(links);
-			treeToSet(rechts);
+			// TODO: rebalance und Höhe anpassen -> sehr aufwendig, da der gesamte Baum bottom-up durchlaufen werden muss
 		}
+		return knoten;
 	}
 	
 	/**
@@ -151,26 +194,25 @@ public class AdtAVLBaumImpl implements AdtAVLBaum {
 		return knoten == null ? 0 : knoten.getHoehe();
 	}
 	
-	private boolean search(int elem) {
+	// TODO: nur zum Testen public
+	@Override
+	public AVLKnoten search(int elem) {
 		return search(wurzel, elem);
 	}
 	
-	private boolean search(AVLKnoten knoten, int elem) {
-		boolean found = false;
-		while(knoten != null && !found) {
+	private AVLKnoten search(AVLKnoten knoten, int elem) {
+		while(knoten != null ) {
 			int wert = knoten.getWert();
 			if(elem < wert) {
 				knoten = knoten.getLinks();
 			} else if(elem > wert) {
 				knoten = knoten.getRechts();
 			} else {
-				found = true;
-				break;
+				return knoten;
 			}
-			found = search(knoten, elem);
 		}
 		
-		return found;
+		return null;
 	}
 	
 	private AVLKnoten insert(AVLKnoten knoten, int elem) {
@@ -215,7 +257,7 @@ public class AdtAVLBaumImpl implements AdtAVLBaum {
 		neueTeilbaumWurzel.setLinks(alteTeilbaumWurzel);
 		alteTeilbaumWurzel.setHoehe(Math.max(high(alteTeilbaumWurzel.getLinks()), high(alteTeilbaumWurzel.getRechts())) + 1);
 		// TODO die Hoehe wird in der aufrufenden Methode #insert() wieder ueberschrieben, warum hier also berechnen?
-//		neueTeilbaumWurzel.setHoehe(Math.max(high(neueTeilbaumWurzel), high(neueTeilbaumWurzel.getRechts())) + 1);
+		neueTeilbaumWurzel.setHoehe(Math.max(high(neueTeilbaumWurzel), high(neueTeilbaumWurzel.getRechts())) + 1);
 		
 		return neueTeilbaumWurzel;
 	}
@@ -232,8 +274,32 @@ public class AdtAVLBaumImpl implements AdtAVLBaum {
 		neueTeilbaumWurzel.setRechts(alteTeilbaumWurzel);
 		alteTeilbaumWurzel.setHoehe(Math.max(high(alteTeilbaumWurzel.getLinks()), high(alteTeilbaumWurzel.getRechts())) + 1);
 		// TODO die Hoehe wird in der aufrufenden Methode #insert() wieder ueberschrieben, warum hier also berechnen?
-//		neueTeilbaumWurzel.setHoehe(Math.max(high(neueTeilbaumWurzel.getLinks()), high(neueTeilbaumWurzel)) + 1);
+		neueTeilbaumWurzel.setHoehe(Math.max(high(neueTeilbaumWurzel.getLinks()), high(neueTeilbaumWurzel)) + 1);
 		
 		return neueTeilbaumWurzel;
+	}
+	
+	private void treeToSet() {
+		if(wurzel == null) {
+			System.err.println("AVL Baum ist leer!");
+		} else {
+			treeToSet(wurzel);
+		}
+	}
+	
+	private void treeToSet(AVLKnoten knoten) {
+		if(knoten != null) {
+			AVLKnoten links = knoten.getLinks();
+			AVLKnoten rechts = knoten.getRechts();
+			
+			// Fuegt wenn Kind == null einen leeren String ein -> wird in GraphViz ignoriert
+			alleKnotenVerbindungen.add(knoten.getWert() + (links == null ? "" : " -> " + links.getWert()));
+			alleKnotenVerbindungen.add(knoten.getWert() + (rechts == null ? "" : " -> " + rechts.getWert()));
+			// -> == digraph (directed)
+			// -- == graph (undirected)
+			
+			treeToSet(links);
+			treeToSet(rechts);
+		}
 	}
 }
