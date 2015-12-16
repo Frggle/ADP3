@@ -70,7 +70,18 @@ public class AdtAVLBaumTests {
 		avlbaum.delete(4);
 		assertEquals(2, avlbaum.high());
 	}
-	
-	
+
+	/**
+	 * TODO
+	 */
+	@Test
+	public void testDeleteDups() {
+		avlbaum.insert(2);
+		avlbaum.insert(1);
+		avlbaum.insert(3);
+		avlbaum.insert(1);
+		avlbaum.insert(2);
+		avlbaum.delete(2);
+	}
 	
 }
