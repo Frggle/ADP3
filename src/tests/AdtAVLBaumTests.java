@@ -1,11 +1,10 @@
 package tests;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import general.Count;
 import general.NumGenerator;
-
 import org.junit.Before;
 import org.junit.Test;
-
 import adt.implementations.AdtAVLBaumImpl;
 import adt.interfaces.AdtAVLBaum;
 import adt.interfaces.AdtArray;
@@ -74,11 +73,6 @@ public class AdtAVLBaumTests {
 		assertEquals(2, avlbaum.high());
 	}
 	
-	@Test
-	public void test() {
-	    // TODO Messung
-	}
-
 	/**
 	 * Einfuegen von 1.000.000.000 Zahlen -> DAUERT!!
 	 */
