@@ -153,14 +153,27 @@ public class AdtAVLBaumImpl implements AdtAVLBaum {
 		}
 		int knotenWert = knoten.getWert();
 		if(knotenWert > elem) {
-			// TODO: Idee: in jedem Schritt die Höhe verringern und prüfen ob Balance gegeben
-			// Problem, wenn Element gar nicht im AVLBaum enthalten -> Höhe umsonst angepasst
 			AVLKnoten linkerKnoten = knoten.getLinks();
 			knoten.setLinks(delete(linkerKnoten, elem));
+			
+			if(high(knoten.getLinks()) - high(knoten.getRechts()) == 2) { // prueft ob Baum balanciert
+                if(elem < knoten.getLinks().getWert()) {
+                    knoten = rechtsRotationUmLinkesKind(knoten);
+                } else { // wenn das neue Element ein ZickZack (grafisch) verursacht hat -> Links-Rechts (bspw. 4, 2, 3)
+                    knoten = rechtsLinksRotation(knoten);
+                }
+            }
 		} else if(knotenWert < elem) {
-			// TODO: selbiges wie knotenWert > elem
 			AVLKnoten rechterKnoten = knoten.getRechts();
 			knoten.setRechts(delete(rechterKnoten, elem));
+			
+			if(high(knoten.getRechts()) - high(knoten.getLinks()) == 2) {    // prueft ob Baum balanciert
+                if(elem >= knoten.getRechts().getWert()) {
+                    knoten = linksRotationUmRechtesKind(knoten);
+                } else { // wenn das neue Element ein ZickZack (grafisch) verursacht hat -> Rechts-Links (bspw. 4, 6, 5)
+                    knoten = linksRechtsRotation(knoten);
+                }
+            }
 		} else {	// zu loeschendes Element gefunden
 			if(knoten.getHoehe() == 1) {	// keine Kinder
 				knoten = null;
@@ -171,7 +184,6 @@ public class AdtAVLBaumImpl implements AdtAVLBaum {
 					knoten = knoten.getRechts();
 				}
 			} else if((knoten.getLinks() != null) && (knoten.getRechts() != null)) {// zwei Kinder
-				// TODO
 				AVLKnoten minKnoten = knoten.getRechts();	// minimalster Knoten im rechten Teilbaum (ausgehend vom zu loeschenden Knoten)
 				while(minKnoten.getLinks() != null) {
 					minKnoten = minKnoten.getLinks();
@@ -179,9 +191,9 @@ public class AdtAVLBaumImpl implements AdtAVLBaum {
 				delete(knoten, minKnoten.getWert());	// loescht in dem Teilbaum den Knoten, dessen Wert kopiert wird
 				knoten.setWert(minKnoten.getWert());	// kopiert den Wert vom geloeschten Knoten
 			}
-			
-			// TODO: rebalance und Höhe anpassen -> sehr aufwendig, da der gesamte Baum bottom-up durchlaufen werden muss
 		}
+		knoten.setHoehe(Math.max(high(knoten.getLinks()), high(knoten.getRechts())) + 1);
+		
 		return knoten;
 	}
 	
