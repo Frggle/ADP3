@@ -73,7 +73,7 @@ public class AdtListImpl implements AdtList
         {
             // pruefen, ob max. Groesse von Array erreicht -> wenn ja
             // vergroessern und kopieren
-            if (_laenge == _array.length)
+            if (_laenge == _array.length - 1)
             {                
                 int[] _tmpArray = new int[_array.length + 100];
                 System.arraycopy(_array, 0, _tmpArray, 0, _array.length - 1);

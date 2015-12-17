@@ -44,9 +44,9 @@ public class AdtArrayImpl implements AdtArray
             while(_array.laenge() <= (pos - 1)) {
                 _array.insert(_array.laenge() + 1, 0);
             }
-//            _array.delete(pos + 1);
-            _array.insert(pos + 1, elem);
             _array.delete(pos + 1);
+            _array.insert(pos + 1, elem);
+//            _array.delete(pos + 1);
         }
     }
 

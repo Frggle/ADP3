@@ -1,8 +1,11 @@
 package tests;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import general.NumGenerator;
+
 import org.junit.Before;
 import org.junit.Test;
+
 import adt.implementations.AdtAVLBaumImpl;
 import adt.interfaces.AdtAVLBaum;
 import adt.interfaces.AdtArray;
@@ -70,19 +73,24 @@ public class AdtAVLBaumTests {
 		avlbaum.delete(4);
 		assertEquals(2, avlbaum.high());
 	}
-
-	/**
-	 * TODO
-	 */
-	@Test
-	public void testDeleteDups() {
-		avlbaum.insert(2);
-		avlbaum.insert(1);
-		avlbaum.insert(3);
-		avlbaum.delete(3);
-		avlbaum.print();
-		
-		assertTrue(true);
-	}
 	
+	@Test
+	public void test() {
+	    // TODO Messung
+	}
+
+//	/**
+//	 * Einfuegen von 1.000.000.000 Zahlen -> DAUERT!!
+//	 */
+//	@Test
+//	public void test100000000() {
+//        long runtime = 0;
+//        for(int i = 0; i < 1000000000; i++) {
+//            long l = avlbaum.insertRunTime(i);
+//            runtime += l;
+//        }
+//        
+//        System.err.println("Laufzeit (1.000.000.000): " + runtime + "ms");
+//		assertTrue(true);
+//	}
 }

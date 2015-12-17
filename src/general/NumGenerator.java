@@ -176,4 +176,20 @@ public class NumGenerator {
 		}
 		return array;
 	}
+	
+	public static List<Integer> readNumAsList(String filename) {
+        List<Integer> array = new ArrayList<>();       
+        Scanner scanner = null;
+        try {
+            scanner = new Scanner(new FileReader(filename + ".dat"));
+            while(scanner.hasNextInt()) {
+                array.add(scanner.nextInt());
+            }
+        } catch(FileNotFoundException e) {
+            System.err.println("Die Datei " + filename + " wurde nicht gefunden!");
+        } finally {
+            scanner.close();
+        }
+        return array;
+    }
 }
