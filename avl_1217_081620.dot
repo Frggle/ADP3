@@ -1,6 +1,0 @@
-digraph avlbaum {
-2
-5
-4 -> 5
-4 -> 2
-}

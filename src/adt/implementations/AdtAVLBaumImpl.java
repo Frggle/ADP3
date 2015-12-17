@@ -27,7 +27,6 @@ public class AdtAVLBaumImpl implements AdtAVLBaum {
 	private AdtAVLBaumImpl() {
 		wurzel = null;
 		alleKnotenVerbindungen = new HashSet<>();
-
 		initCounter();
 	}
 	
@@ -140,13 +139,7 @@ public class AdtAVLBaumImpl implements AdtAVLBaum {
 		// TODO delete reinkopieren und die Counter hochzaehlen
 		return new Count(deleteCountRead, deleteCountWrite, leftRotCounter, rightRotCounter);
 	}
-	
-	// TODO: wieder löschen, nur zum Testen
-	@Override
-	public Set<String> getSet() {
-		return alleKnotenVerbindungen;
-	}
-	
+
 	private AVLKnoten delete(AVLKnoten knoten, int elem) {
 		if(knoten == null) {
 			return knoten;
@@ -206,27 +199,6 @@ public class AdtAVLBaumImpl implements AdtAVLBaum {
 		return knoten == null ? 0 : knoten.getHoehe();
 	}
 	
-	// TODO: nur zum Testen public
-	@Override
-	public AVLKnoten search(int elem) {
-		return search(wurzel, elem);
-	}
-	
-	private AVLKnoten search(AVLKnoten knoten, int elem) {
-		while(knoten != null ) {
-			int wert = knoten.getWert();
-			if(elem < wert) {
-				knoten = knoten.getLinks();
-			} else if(elem > wert) {
-				knoten = knoten.getRechts();
-			} else {
-				return knoten;
-			}
-		}
-		
-		return null;
-	}
-	
 	private AVLKnoten insert(AVLKnoten knoten, int elem) {
 		if(knoten == null) {
 			knoten = new AVLKnoten(elem);
@@ -268,7 +240,6 @@ public class AdtAVLBaumImpl implements AdtAVLBaum {
 		alteTeilbaumWurzel.setRechts(alteTeilbaumWurzel.getLinks());
 		neueTeilbaumWurzel.setLinks(alteTeilbaumWurzel);
 		alteTeilbaumWurzel.setHoehe(Math.max(high(alteTeilbaumWurzel.getLinks()), high(alteTeilbaumWurzel.getRechts())) + 1);
-		// TODO die Hoehe wird in der aufrufenden Methode #insert() wieder ueberschrieben, warum hier also berechnen?
 		neueTeilbaumWurzel.setHoehe(Math.max(high(neueTeilbaumWurzel), high(neueTeilbaumWurzel.getRechts())) + 1);
 		
 		return neueTeilbaumWurzel;
@@ -285,7 +256,6 @@ public class AdtAVLBaumImpl implements AdtAVLBaum {
 		alteTeilbaumWurzel.setLinks(alteTeilbaumWurzel.getRechts());
 		neueTeilbaumWurzel.setRechts(alteTeilbaumWurzel);
 		alteTeilbaumWurzel.setHoehe(Math.max(high(alteTeilbaumWurzel.getLinks()), high(alteTeilbaumWurzel.getRechts())) + 1);
-		// TODO die Hoehe wird in der aufrufenden Methode #insert() wieder ueberschrieben, warum hier also berechnen?
 		neueTeilbaumWurzel.setHoehe(Math.max(high(neueTeilbaumWurzel.getLinks()), high(neueTeilbaumWurzel)) + 1);
 		
 		return neueTeilbaumWurzel;

@@ -79,9 +79,10 @@ public class AdtAVLBaumTests {
 		avlbaum.insert(2);
 		avlbaum.insert(1);
 		avlbaum.insert(3);
-		avlbaum.insert(1);
-		avlbaum.insert(2);
-		avlbaum.delete(2);
+		avlbaum.delete(3);
+		avlbaum.print();
+		
+		assertTrue(true);
 	}
 	
 }
