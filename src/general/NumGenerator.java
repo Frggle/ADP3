@@ -49,13 +49,13 @@ public class NumGenerator {
 				List<Integer> list = null;
 				if(yesToDuplicates) {
 					list = new ArrayList<Integer>();
-					while(list.size() <= quantity) {
+					while(list.size() < quantity) {
 						list.add(random.nextInt(1, quantity * 3));
 					}
 				} else {
 					list = noDuplicates(quantity);
 				}
-				
+
 				for(int i = 0; i < list.size() - 1; i++) {
 					bw.write(String.valueOf(list.get(i)) + " ");
 				}
@@ -101,7 +101,7 @@ public class NumGenerator {
 				List<Integer> list = null;
 				if(yesToDuplicates) {
 					list = new ArrayList<Integer>();
-					while(list.size() <= quantity) {
+					while(list.size() < quantity) {
 						list.add(random.nextInt(1, quantity * 3));
 					}
 				} else {
@@ -146,7 +146,7 @@ public class NumGenerator {
 		
 		ThreadLocalRandom random = ThreadLocalRandom.current();
 		
-		while(resultSet.size() <= quantity) {
+		while(resultSet.size() < quantity) {
 			resultSet.add(random.nextInt(1, quantity * 3));
 		}
 		resultList.addAll(resultSet);

@@ -20,11 +20,11 @@ public class AdtAVLBaumTests {
 	}
 	
 	/**
-	 * Lasttest mit 10000 Zahlen
+	 * Lasttest mit 100000 Zahlen
 	 */
 	@Test
-	public void test10000RandomNoDup(){
-		String file = "1000RandomNoDup";
+	public void test100000RandomNoDup(){
+		String file = "100000RandomNoDup";
 		NumGenerator.sortNum(file, 10000, false);
 		AdtArray array = NumGenerator.readNum(file);
 		for(int i = 0; i < array.lengthA(); i++) {
@@ -34,13 +34,13 @@ public class AdtAVLBaumTests {
 	}
 	
 	/**
-	 * Lasttest mit 10000 Zahlen
+	 * Lasttest mit 1000 Zahlen
 	 * Nach dem alle eingefuegt wird, werden alle wieder geloescht
 	 */
 	@Test
-	public void test10000RandomNoDupInsertDelete(){
-		String file = "10000RandomNoDupInsertDelete";
-		NumGenerator.sortNum(file, 10000, false);
+	public void test1000RandomNoDupInsertDelete(){
+		String file = "1000RandomNoDupInsertDelete";
+		NumGenerator.sortNum(file, 1000, false);
 		AdtArray array = NumGenerator.readNum(file);
 		for(int i = 0; i < array.lengthA(); i++) {
 			avlbaum.insert(array.getA(i));
@@ -79,18 +79,19 @@ public class AdtAVLBaumTests {
 	    // TODO Messung
 	}
 
-//	/**
-//	 * Einfuegen von 1.000.000.000 Zahlen -> DAUERT!!
-//	 */
+	/**
+	 * Einfuegen von 1.000.000.000 Zahlen -> DAUERT!!
+	 */
 //	@Test
-//	public void test100000000() {
+//	public void test10000000() {
 //        long runtime = 0;
-//        for(int i = 0; i < 1000000000; i++) {
+//        for(int i = 0; i < 100000000; i++) {
 //            long l = avlbaum.insertRunTime(i);
 //            runtime += l;
+//            System.err.println((i / 100000000) * 100 + "%");
 //        }
 //        
-//        System.err.println("Laufzeit (1.000.000.000): " + runtime + "ms");
+//        System.err.println("Laufzeit (100.000.000): " + runtime + "ms");
 //		assertTrue(true);
 //	}
 }

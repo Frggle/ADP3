@@ -16,6 +16,7 @@ public class AdtAVLBaumImpl implements AdtAVLBaum {
 	
 	private AVLKnoten wurzel;
 	private Set<String> alleKnotenVerbindungen;
+	private Set<Integer> rotateInt; 
 	
 	private int countRead;
 	private int countWrite;
@@ -25,6 +26,9 @@ public class AdtAVLBaumImpl implements AdtAVLBaum {
 	private AdtAVLBaumImpl() {
 		wurzel = null;
 		alleKnotenVerbindungen = new HashSet<>();
+		rotateInt = new HashSet<>();
+		rotateInt.add(-2);
+		rotateInt.add(2);
 		initCounter();
 	}
 	
@@ -56,7 +60,7 @@ public class AdtAVLBaumImpl implements AdtAVLBaum {
 	
 	@Override
 	public void delete(int elem) {
-		delete(wurzel, elem);
+		wurzel = delete(wurzel, elem);
 	}
 	
 	@Override
@@ -125,14 +129,14 @@ public class AdtAVLBaumImpl implements AdtAVLBaum {
 	@Override
 	public Count insertCount(int elem) {
 		initCounter();
-		insertCounter(wurzel, elem);
+		wurzel = insertCounter(wurzel, elem);
 		return new Count(countRead, countWrite, leftRotCounter, rightRotCounter);
 	}
 
 	@Override
 	public Count deleteCount(int elem) {
 		initCounter();
-		deleteCounter(wurzel, elem);
+		wurzel = deleteCounter(wurzel, elem);
 		return new Count(countRead, countWrite, leftRotCounter, rightRotCounter);
 	}
 
@@ -145,24 +149,24 @@ public class AdtAVLBaumImpl implements AdtAVLBaum {
 			AVLKnoten linkerKnoten = knoten.getLinks();
 			knoten.setLinks(delete(linkerKnoten, elem));
 			
-			if(high(knoten.getLinks()) - high(knoten.getRechts()) == 2) { // prueft ob Baum balanciert
-                if(elem < knoten.getLinks().getWert()) {
-                    knoten = rechtsRotationUmLinkesKind(knoten);
-                } else { // wenn das neue Element ein ZickZack (grafisch) verursacht hat -> Links-Rechts (bspw. 4, 2, 3)
-                    knoten = rechtsLinksRotation(knoten);
-                }
-            }
+			if(rotateInt.contains(high(knoten.getRechts()) - high(knoten.getLinks()))) {	// prueft ob Baum balanciert			
+				if(knotenWert < knoten.getRechts().getWert()) {
+					knoten = linksRotationUmRechtesKind(knoten);
+				} else { // wenn das neue Element ein ZickZack (grafisch) verursacht hat -> Rechts-Links (bspw. 4, 6, 5)
+					knoten = linksRechtsRotation(knoten);
+				}
+			}	
 		} else if(knotenWert < elem) {
 			AVLKnoten rechterKnoten = knoten.getRechts();
 			knoten.setRechts(delete(rechterKnoten, elem));
-			
-			if(high(knoten.getRechts()) - high(knoten.getLinks()) == 2) {    // prueft ob Baum balanciert
-                if(elem >= knoten.getRechts().getWert()) {
-                    knoten = linksRotationUmRechtesKind(knoten);
-                } else { // wenn das neue Element ein ZickZack (grafisch) verursacht hat -> Rechts-Links (bspw. 4, 6, 5)
-                    knoten = linksRechtsRotation(knoten);
-                }
-            }
+	
+			if(rotateInt.contains(high(knoten.getRechts()) - high(knoten.getLinks()))) {	// prueft ob Baum balanciert
+				if(knotenWert > knoten.getLinks().getWert()) {
+					knoten = rechtsRotationUmLinkesKind(knoten);
+				} else { // wenn das neue Element ein ZickZack (grafisch) verursacht hat -> Links-Rechts (bspw. 4, 2, 3)
+					knoten = rechtsLinksRotation(knoten);
+				}
+			}
 		} else {	// zu loeschendes Element gefunden
 			if(knoten.getHoehe() == 1) {	// keine Kinder
 				knoten = null;
@@ -179,9 +183,9 @@ public class AdtAVLBaumImpl implements AdtAVLBaum {
 				}
 				delete(knoten, minKnoten.getWert());	// loescht in dem Teilbaum den Knoten, dessen Wert kopiert wird
 				knoten.setWert(minKnoten.getWert());	// kopiert den Wert vom geloeschten Knoten
+				knoten.setHoehe(Math.max(high(knoten.getLinks()), high(knoten.getRechts())) + 1);
 			}
 		}
-		knoten.setHoehe(Math.max(high(knoten.getLinks()), high(knoten.getRechts())) + 1);
 		
 		return knoten;
 	}
@@ -199,14 +203,14 @@ public class AdtAVLBaumImpl implements AdtAVLBaum {
             knoten.setLinks(deleteCounter(linkerKnoten, elem));
             
             countRead+=2;
-            if(high(knoten.getLinks()) - high(knoten.getRechts()) == 2) { // prueft ob Baum balanciert
+            if(rotateInt.contains(high(knoten.getRechts()) - high(knoten.getLinks()))) {	// prueft ob Baum balanciert			
                 countRead+=2;
-                if(elem < knoten.getLinks().getWert()) {
-                    knoten = rechtsRotationUmLinkesKindCounter(knoten);
-                } else { // wenn das neue Element ein ZickZack (grafisch) verursacht hat -> Links-Rechts (bspw. 4, 2, 3)
-                    knoten = rechtsLinksRotationCounter(knoten);
-                }
-            }
+            	if(knotenWert < knoten.getRechts().getWert()) {
+					knoten = linksRotationUmRechtesKind(knoten);
+				} else { // wenn das neue Element ein ZickZack (grafisch) verursacht hat -> Rechts-Links (bspw. 4, 6, 5)
+					knoten = linksRechtsRotation(knoten);
+				}
+			}
         } else if(knotenWert < elem) {
             countRead++;
             AVLKnoten rechterKnoten = knoten.getRechts();
@@ -214,14 +218,14 @@ public class AdtAVLBaumImpl implements AdtAVLBaum {
             knoten.setRechts(deleteCounter(rechterKnoten, elem));
             
             countRead+=2;
-            if(high(knoten.getRechts()) - high(knoten.getLinks()) == 2) {    // prueft ob Baum balanciert
-                countRead+=2;
-                if(elem >= knoten.getRechts().getWert()) {
-                    knoten = linksRotationUmRechtesKindCounter(knoten);
-                } else { // wenn das neue Element ein ZickZack (grafisch) verursacht hat -> Rechts-Links (bspw. 4, 6, 5)
-                    knoten = linksRechtsRotationCounter(knoten);
-                }
-            }
+            if(rotateInt.contains(high(knoten.getRechts()) - high(knoten.getLinks()))) {	// prueft ob Baum balanciert
+            	countRead+=2;
+            	if(knotenWert > knoten.getLinks().getWert()) {
+					knoten = rechtsRotationUmLinkesKind(knoten);
+				} else { // wenn das neue Element ein ZickZack (grafisch) verursacht hat -> Links-Rechts (bspw. 4, 2, 3)
+					knoten = rechtsLinksRotation(knoten);
+				}
+			}
         } else {    // zu loeschendes Element gefunden
             countRead+=5;
             if(knoten.getHoehe() == 1) {    // keine Kinder
@@ -249,11 +253,11 @@ public class AdtAVLBaumImpl implements AdtAVLBaum {
                 countRead++;
                 countWrite++;
                 knoten.setWert(minKnoten.getWert());    // kopiert den Wert vom geloeschten Knoten
+                countRead+=2;
+                countWrite++;
+                knoten.setHoehe(Math.max(high(knoten.getLinks()), high(knoten.getRechts())) + 1);
             }
         }
-        countRead+=2;
-        countWrite++;
-        knoten.setHoehe(Math.max(high(knoten.getLinks()), high(knoten.getRechts())) + 1);
         
         return knoten;
     }
@@ -272,8 +276,7 @@ public class AdtAVLBaumImpl implements AdtAVLBaum {
 			knoten = new AVLKnoten(elem);
 		} else if(elem < knoten.getWert()) {
 			knoten.setLinks(insert(knoten.getLinks(), elem)); // rekursives "Entlanghangeln"
-			// links - rechts, weil wir uns im linken Teilbaum befinden
-			if(high(knoten.getLinks()) - high(knoten.getRechts()) == 2) { // prueft ob Baum balanciert
+			if(rotateInt.contains(high(knoten.getRechts()) - high(knoten.getLinks()))) {	// prueft ob Baum balanciert
 				if(elem < knoten.getLinks().getWert()) {
 					knoten = rechtsRotationUmLinkesKind(knoten);
 				} else { // wenn das neue Element ein ZickZack (grafisch) verursacht hat -> Links-Rechts (bspw. 4, 2, 3)
@@ -282,7 +285,7 @@ public class AdtAVLBaumImpl implements AdtAVLBaum {
 			}
 		} else if(elem >= knoten.getWert()) {
 			knoten.setRechts(insert(knoten.getRechts(), elem));	// rekursives "Entlanghangeln"
-			if(high(knoten.getRechts()) - high(knoten.getLinks()) == 2) {	// prueft ob Baum balanciert
+			if(rotateInt.contains(high(knoten.getRechts()) - high(knoten.getLinks()))) {	// prueft ob Baum balanciert
 				if(elem >= knoten.getRechts().getWert()) {
 					knoten = linksRotationUmRechtesKind(knoten);
 				} else { // wenn das neue Element ein ZickZack (grafisch) verursacht hat -> Rechts-Links (bspw. 4, 6, 5)
@@ -290,7 +293,7 @@ public class AdtAVLBaumImpl implements AdtAVLBaum {
 				}
 			}
 		} else {
-			// nichts, weil Element bereits enthalten
+			// nichts, (weil Element bereits enthalten -> spielt keine Rolle, weil Duplikate zugelassen sind)
 		}
 		knoten.setHoehe(Math.max(high(knoten.getLinks()), high(knoten.getRechts())) + 1);
 		
@@ -305,8 +308,7 @@ public class AdtAVLBaumImpl implements AdtAVLBaum {
             knoten.setLinks(insertCounter(knoten.getLinks(), elem)); // rekursives "Entlanghangeln"
             countRead+=3;
             countWrite++;
-            // links - rechts, weil wir uns im linken Teilbaum befinden
-            if(high(knoten.getLinks()) - high(knoten.getRechts()) == 2) { // prueft ob Baum balanciert
+            if(rotateInt.contains(high(knoten.getRechts()) - high(knoten.getLinks()))) {	// prueft ob Baum balanciert
                 countRead+=2;
                 if(elem < knoten.getLinks().getWert()) {
                     knoten = rechtsRotationUmLinkesKindCounter(knoten);
@@ -318,7 +320,7 @@ public class AdtAVLBaumImpl implements AdtAVLBaum {
             knoten.setRechts(insertCounter(knoten.getRechts(), elem)); // rekursives "Entlanghangeln"
             countRead+=3;
             countWrite++;
-            if(high(knoten.getRechts()) - high(knoten.getLinks()) == 2) {   // prueft ob Baum balanciert
+            if(rotateInt.contains(high(knoten.getRechts()) - high(knoten.getLinks()))) {	// prueft ob Baum balanciert
                 countRead+=2;
                 if(elem >= knoten.getRechts().getWert()) {
                     knoten = linksRotationUmRechtesKindCounter(knoten);
@@ -327,7 +329,7 @@ public class AdtAVLBaumImpl implements AdtAVLBaum {
                 }
             }
         } else {
-            // nichts, weil Element bereits enthalten
+        	// nichts, (weil Element bereits enthalten -> spielt keine Rolle, weil Duplikate zugelassen sind)
         }
 	    countRead+=2;
 	    countWrite++;
@@ -350,10 +352,10 @@ public class AdtAVLBaumImpl implements AdtAVLBaum {
 	
 	private AVLKnoten linksRotationUmRechtesKind(AVLKnoten alteTeilbaumWurzel) {
 		AVLKnoten neueTeilbaumWurzel = alteTeilbaumWurzel.getRechts();
-		alteTeilbaumWurzel.setRechts(alteTeilbaumWurzel.getLinks());
+		alteTeilbaumWurzel.setRechts(neueTeilbaumWurzel.getLinks());
 		neueTeilbaumWurzel.setLinks(alteTeilbaumWurzel);
 		alteTeilbaumWurzel.setHoehe(Math.max(high(alteTeilbaumWurzel.getLinks()), high(alteTeilbaumWurzel.getRechts())) + 1);
-		neueTeilbaumWurzel.setHoehe(Math.max(high(neueTeilbaumWurzel), high(neueTeilbaumWurzel.getRechts())) + 1);
+		neueTeilbaumWurzel.setHoehe(Math.max(high(alteTeilbaumWurzel), high(neueTeilbaumWurzel.getRechts())) + 1);
 		
 		return neueTeilbaumWurzel;
 	}
@@ -361,7 +363,7 @@ public class AdtAVLBaumImpl implements AdtAVLBaum {
 	private AVLKnoten linksRotationUmRechtesKindCounter(AVLKnoten alteTeilbaumWurzel) {
         AVLKnoten neueTeilbaumWurzel = alteTeilbaumWurzel.getRechts();
         countRead++;
-        alteTeilbaumWurzel.setRechts(alteTeilbaumWurzel.getLinks());
+        alteTeilbaumWurzel.setRechts(neueTeilbaumWurzel.getLinks());
         countRead++;
         countWrite++;
         neueTeilbaumWurzel.setLinks(alteTeilbaumWurzel);
@@ -369,7 +371,7 @@ public class AdtAVLBaumImpl implements AdtAVLBaum {
         alteTeilbaumWurzel.setHoehe(Math.max(high(alteTeilbaumWurzel.getLinks()), high(alteTeilbaumWurzel.getRechts())) + 1);
         countWrite++;
         countRead+=2;
-        neueTeilbaumWurzel.setHoehe(Math.max(high(neueTeilbaumWurzel), high(neueTeilbaumWurzel.getRechts())) + 1);
+        neueTeilbaumWurzel.setHoehe(Math.max(high(alteTeilbaumWurzel), high(neueTeilbaumWurzel.getRechts())) + 1);
         countRead++;
         countWrite++;
         
@@ -400,7 +402,7 @@ public class AdtAVLBaumImpl implements AdtAVLBaum {
 		alteTeilbaumWurzel.setHoehe(Math.max(high(alteTeilbaumWurzel.getLinks()), high(alteTeilbaumWurzel.getRechts())) + 1);
 		countWrite++;
         countRead+=2;
-		neueTeilbaumWurzel.setHoehe(Math.max(high(neueTeilbaumWurzel.getLinks()), high(neueTeilbaumWurzel)) + 1);
+		neueTeilbaumWurzel.setHoehe(Math.max(high(neueTeilbaumWurzel.getLinks()), high(alteTeilbaumWurzel)) + 1);
 		countRead++;
         countWrite++;
         
@@ -413,7 +415,7 @@ public class AdtAVLBaumImpl implements AdtAVLBaum {
         alteTeilbaumWurzel.setLinks(alteTeilbaumWurzel.getRechts());
         neueTeilbaumWurzel.setRechts(alteTeilbaumWurzel);
         alteTeilbaumWurzel.setHoehe(Math.max(high(alteTeilbaumWurzel.getLinks()), high(alteTeilbaumWurzel.getRechts())) + 1);
-        neueTeilbaumWurzel.setHoehe(Math.max(high(neueTeilbaumWurzel.getLinks()), high(neueTeilbaumWurzel)) + 1);
+        neueTeilbaumWurzel.setHoehe(Math.max(high(neueTeilbaumWurzel.getLinks()), high(alteTeilbaumWurzel)) + 1);
         
         return neueTeilbaumWurzel;
     }
