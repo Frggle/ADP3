@@ -1,9 +1,0 @@
-digraph avlbaum {
-legende [label = "Syntax:\n <val> (<high>)", color = "red"]
-2 [label = "2 (2)"]
-2
-5 [label = "5 (2)"]
-4 [label = "4 (1)"]
-4 -> 5 
-4 -> 2
-}
