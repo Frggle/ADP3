@@ -1,7 +1,6 @@
 package tests;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import general.Count;
 import general.NumGenerator;
 import org.junit.Before;
 import org.junit.Test;

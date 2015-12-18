@@ -7,8 +7,10 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import adt.interfaces.AdtAVLBaum;
 
@@ -17,6 +19,7 @@ public class AdtAVLBaumImpl implements AdtAVLBaum {
 	private AVLKnoten wurzel;
 	private Set<String> alleKnotenVerbindungen;
 	private Set<Integer> rotateInt; 
+	private List<AVLKnoten> alleKnoten;
 	
 	private int countRead;
 	private int countWrite;
@@ -27,6 +30,7 @@ public class AdtAVLBaumImpl implements AdtAVLBaum {
 		wurzel = null;
 		alleKnotenVerbindungen = new HashSet<>();
 		rotateInt = new HashSet<>();
+		alleKnoten = new ArrayList<>();
 		rotateInt.add(-2);
 		rotateInt.add(2);
 		initCounter();
@@ -88,11 +92,12 @@ public class AdtAVLBaumImpl implements AdtAVLBaum {
 			bw = new BufferedWriter(fw);
 			
 			bw.write("digraph avlbaum {\n");
+			bw.write("legende [label = \"Syntax:\\n <val> (<high>)\", color = \"red\"]\n");
 			for(String string : alleKnotenVerbindungen) {
 				bw.write(string + "\n");
 			}
 			bw.write("}\n");
-			System.err.println("Datei wurde erstellt");
+			System.err.println("dot-Datei wurde erstellt");
 		} catch(IOException e) {
 			return false;
 		} finally {
@@ -113,8 +118,10 @@ public class AdtAVLBaumImpl implements AdtAVLBaum {
 			}
 			Process p = r.exec(s);
 			p.waitFor();
+			System.err.println("png-Datei wurde erstellt");
 		} catch(IOException | InterruptedException e) {
 			e.printStackTrace();
+			return false;
 		}
 		return true;
 	}
@@ -430,8 +437,13 @@ public class AdtAVLBaumImpl implements AdtAVLBaum {
 	
 	private void treeToSet(AVLKnoten knoten) {
 		if(knoten != null) {
+			alleKnoten.add(knoten);
 			AVLKnoten links = knoten.getLinks();
 			AVLKnoten rechts = knoten.getRechts();
+			
+			//4 [label = "4 (1)"] --> Wert (Hoehe)"
+			alleKnotenVerbindungen.add(knoten.getWert() +
+					" [label = \"" + knoten.getWert() + "  (" + knoten.getHoehe() + ")" + "\"]");
 			
 			// Fuegt wenn Kind == null einen leeren String ein -> wird in GraphViz ignoriert
 			alleKnotenVerbindungen.add(knoten.getWert() + (links == null ? "" : " -> " + links.getWert()));
