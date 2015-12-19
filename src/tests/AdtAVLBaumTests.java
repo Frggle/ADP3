@@ -1,6 +1,7 @@
 package tests;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import java.util.List;
 import general.NumGenerator;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,7 +23,7 @@ public class AdtAVLBaumTests {
 	 */
 	@Test
 	public void test100000RandomNoDup(){
-		String file = "100000RandomNoDup";
+		String file = "100000RandomNoDup2";
 		NumGenerator.sortNum(file, 10000, false);
 		AdtArray array = NumGenerator.readNum(file);
 		for(int i = 0; i < array.lengthA(); i++) {
@@ -37,7 +38,7 @@ public class AdtAVLBaumTests {
 	 */
 	@Test
 	public void test1000RandomNoDupInsertDelete(){
-		String file = "1000RandomNoDupInsertDelete";
+		String file = "1000RandomNoDupInsertDelete2";
 		NumGenerator.sortNum(file, 1000, false);
 		AdtArray array = NumGenerator.readNum(file);
 		for(int i = 0; i < array.lengthA(); i++) {
@@ -70,6 +71,29 @@ public class AdtAVLBaumTests {
 		avlbaum.insert(5);
 		avlbaum.delete(4);
 		assertEquals(2, avlbaum.high());
+	}
+	
+		
+	@Test
+	public void test2() {
+		String file = "bla2";
+		NumGenerator.sortNum(file, 100, false);
+		List<Integer> array = NumGenerator.readNumAsList(file);
+		for(Integer integer : array) {
+			avlbaum.insert(integer);
+		}
+		avlbaum.print();
+	}
+	
+	@Test
+	public void test() {
+		for(int i = 1; i <= 80; i++) {
+			avlbaum.insert(i);
+		}
+		for(int i = 1; i <= 40; i++) {
+//			avlbaum.delete(i);
+		}
+		avlbaum.print();
 	}
 	
 	/**
